@@ -5,30 +5,29 @@ const userSchema = new mongoose.Schema({
     userName: {
         type: String,
         unique: true,
-        required: [true, "Username is required"],
+        required: true
     },
     email: {
         type: String,
-        required: [true, "Email is required"],
-        unique: true
+        unique: true,
+        required: true
     },
     password: {
         type: String,
-        required: [true, "Password is required"],
-        minLength: [6, "Minimum 6 characters"],
+        required: true,
         select: false
     },
     refreshToken: {
-        default: null,
-        type: String
+        type: String,
+        default: null
     },
     otp: {
-        default: null,
-        type: String
+        type: String,
+        default: null
     },
     otpExpiry: {
-        default: null,
-        type: String
+        type: Date,
+        default: null
     },
     isVerified: {
         type: Boolean,
@@ -56,6 +55,10 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password)
+}
+
+userSchema.methods.compareOtp = async function (otp) {
+    return await bcrypt.compare(otp, this.otp)
 }
 
 const User = mongoose.model("User", userSchema);
