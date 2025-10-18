@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from "react-router";
 
-function App() {
-  const [count, setCount] = useState(0)
+import HomePage from "./components/pages/HomePage";
+import LoginPage from "./components/pages/auth/LoginPage";
+import SignUpPage from "./components/pages/auth/SignUpPage";
+import ForgetPasswordPage from "./components/pages/auth/ForgetPasswordPage";
+import OtpVerificationPage from "./components/pages/auth/OtpVerificationPage";
+import NewPasswordPage from "./components/pages/auth/NewPasswordPage";
+import AuthLayout from "./components/layouts/AuthLayout";
+import PageLayout from "./components/layouts/PageLayout";
+import NotFoundPage from "./components/errors/NotFoundPage";
 
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen w-full bg-green-100">
+      <Routes>
+        {/* Pages */}
+        <Route element={<PageLayout />}>
+          <Route index element={<HomePage />} />
+        </Route>
+        {/* Pages */}
+        {/* Auth Pages */}
+        <Route element={<AuthLayout />}>
+          <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/register" element={<SignUpPage />} />
+          <Route
+            path="/auth/forget-password"
+            element={<ForgetPasswordPage />}
+          />
+          <Route
+            path="/auth/otp-verification"
+            element={<OtpVerificationPage />}
+          />
+          <Route path="/auth/new-password" element={<NewPasswordPage />} />
+        </Route>
+        {/* Auth Pages */}
+        {/* 404 Page */}
+        <Route path="/*" element={<NotFoundPage />} />
+        {/* 404 Page */}
+      </Routes>
+    </div>
+  );
+};
 
-export default App
+export default App;
