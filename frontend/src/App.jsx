@@ -1,45 +1,43 @@
-import { Route, Routes } from "react-router";
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router";
+import SignUp from "./pages/Auth/SignUp";
+import SignIn from "./pages/Auth/SignIn";
+import AuthLayout from "./layouts/AuthLayout";
+import DashboardLayout from "./layouts/DashboardLayout"
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import EmailVerification from "./pages/auth/EmailVerification";
+import UploadReport from "./pages/Dashboard/UploadReport";
+import TrackVitals from "./pages/Dashboard/TrackVitals";
+import Profile from "./pages/Dashboard/Profile";
+import Reports from "./pages/Dashboard/Reports";
 
-import HomePage from "./components/pages/HomePage";
-import LoginPage from "./components/pages/auth/LoginPage";
-import SignUpPage from "./components/pages/auth/SignUpPage";
-import ForgetPasswordPage from "./components/pages/auth/ForgetPasswordPage";
-import OtpVerificationPage from "./components/pages/auth/OtpVerificationPage";
-import NewPasswordPage from "./components/pages/auth/NewPasswordPage";
-import AuthLayout from "./components/layouts/AuthLayout";
-import PageLayout from "./components/layouts/PageLayout";
-import NotFoundPage from "./components/errors/NotFoundPage";
-
-const App = () => {
+function App() {
   return (
-    <div className="min-h-screen w-full bg-green-100">
+    <BrowserRouter>
       <Routes>
-        {/* Pages */}
-        <Route element={<PageLayout />}>
-          <Route index element={<HomePage />} />
-        </Route>
-        {/* Pages */}
-        {/* Auth Pages */}
+        <Route></Route>
+
         <Route element={<AuthLayout />}>
-          <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/auth/register" element={<SignUpPage />} />
-          <Route
-            path="/auth/forget-password"
-            element={<ForgetPasswordPage />}
-          />
-          <Route
-            path="/auth/otp-verification"
-            element={<OtpVerificationPage />}
-          />
-          <Route path="/auth/new-password" element={<NewPasswordPage />} />
+          <Route index element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/verify-email/:token" element={<EmailVerification />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
-        {/* Auth Pages */}
-        {/* 404 Page */}
-        <Route path="/*" element={<NotFoundPage />} />
-        {/* 404 Page */}
+
+        {/* 🔹 Admin Routes */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/upload-reports" element={<UploadReport />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/vitals" element={<TrackVitals />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
       </Routes>
-    </div>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
