@@ -20,6 +20,7 @@ db.once("open", () => {
 })
 // For DB Connection
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(cors());

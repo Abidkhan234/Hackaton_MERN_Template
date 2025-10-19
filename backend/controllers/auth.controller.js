@@ -6,10 +6,17 @@ import { sendOtpToEmail, sendVerificationToEmail } from "../utils/sendEmailVerif
 import { generateAccessToken, generateRefreshToken } from "../utils/generateTokens.js"
 import { sendResponse } from "../utils/sendResponse.js";
 import "dotenv/config"
+import { uploadFileToCloudinary } from "../utils/uploadToCloudniary.js";
+import { AISummery } from "../utils/aiSummery.js";
 
 const registerUser = async (req, res) => {
     try {
         const { userName, email } = req.body;
+
+        const avatarPath = req.file?.path;
+
+        console.log(avatarPath);
+
 
         const user = await User.findOne({
             $or: [{ email }, { userName }]
@@ -23,6 +30,8 @@ const registerUser = async (req, res) => {
             });
         }
 
+        const publicPath = await uploadFileToCloudinary(avatarPath);
+
         // Always generates a 6-digit number (000000 - 999999)
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const hashOtp = bcrypt.hashSync(otp, 10);
@@ -32,7 +41,7 @@ const registerUser = async (req, res) => {
 
         await sendVerificationToEmail(otp, email, userName);
 
-        await User.create({ ...req.body, otp: hashOtp, otpExpiry });
+        await User.create({ ...req.body, otp: hashOtp, otpExpiry, avatar: publicPath.secure_url });
 
         res.status(201).send({ status: 201, message: "Register successfully" })
     } catch (error) {
@@ -253,4 +262,34 @@ const verifyOtp = async (req, res) => {
     }
 }
 
-export { loginUser, registerUser, refreshAccessToken, logoutUser, userNewPassword, verifyEmail, verifyOtp, forgetPassword }
+const userProfile = async (req, res) => {
+    try {
+
+        const user = await User.findOne({ _id: req.user.id });
+
+        if (!user) {
+            return sendResponse(res, 404, "User not found");
+        }
+
+        sendResponse(res, 200, "User profile successfully", { user });
+    } catch (error) {
+        console.log("User Profile", error);
+        sendResponse(res, 500, "Internal server error", { error: error.message })
+    }
+}
+
+const aiSummery = async (req, res) => {
+    try {
+
+        const { question } = req.body;
+
+        const answer = await AISummery(question);
+
+        sendResponse(res, 200, "Successfully answer generated", { respone: answer })
+    } catch (error) {
+        console.log("AI summery Error", error);
+        sendResponse(res, 500, "Internal server error", { error: error.message })
+    }
+}
+
+export { loginUser, registerUser, refreshAccessToken, logoutUser, userNewPassword, verifyEmail, verifyOtp, forgetPassword, userProfile, aiSummery }
